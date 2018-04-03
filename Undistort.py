@@ -31,9 +31,21 @@ for fname in images:
 
         # Draw and display the corners
         cv2.drawChessboardCorners(img, (7,6), corners,ret)
-        cv2.imshow('img',img)
-        cv2.waitKey(500)
+        #cv2.imshow('img',img)
+        #cv2.waitKey(500)
 
 cv2.destroyAllWindows()
 
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
+img = cv2.imread('PATH\TO\IMAGES\open_file_name.jpg')
+h,w = img.shape[:2]
+newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
+
+# undistort
+dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
+
+# crop the image
+x,y,w,h = roi
+dst = dst[y:y+h, x:x+w]
+#output the picture after undistortion.
+cv2.imwrite('PATH\TO\OUPTUPT\output_file_name.png',dst)
